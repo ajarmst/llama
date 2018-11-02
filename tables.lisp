@@ -4,23 +4,26 @@
 
 ;Someday, I'd like to be able to use these as the set of arguments
 ;for the *-tables functions.  Not sure how yet.
-(defvar *tables* 
-      (list 'students
-	    'courses
-	    'classes 
-	    'events 
-	    'attendance
-	    'categories
-	    'tasks
-	    'marks))
+(defvar *tables*
+  (list 'students
+        'courses
+        'classes
+        'events
+        'attendance
+        'categories
+        'tasks
+        'marks))
 
 ;I'm probably breaking a bunch of rules by using string parameters
 ;and parsing them out to symbols, but what the hey, lets have fun
 (defmacro make-table-string (name)
   "Makes a memory table based on the table name as a string"
-  `(defparameter 
+  `(defparameter
      ,(intern (string-upcase (concatenate 'string "*" name "*")) :nait.cnt.llama)
-     (make-instance 'table :schema ,(intern (string-upcase (concatenate 'string "*schema." name "*")) :nait.cnt.llama))))
+     (make-instance 'table :schema
+                    ,(intern (string-upcase
+                              (concatenate 'string "*schema." name "*"))
+                             :nait.cnt.llama))))
 
 (defmacro make-table (name)
   "Makes a memory table based on the table name as a symbol"

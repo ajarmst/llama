@@ -1,4 +1,4 @@
 ;;;; package.lisp
 
-(defpackage #:llama
+(defpackage #:nait.cnt.llama
   (:use #:cl))

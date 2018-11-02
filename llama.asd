@@ -1,6 +1,6 @@
 ;;;; llama.asd
 
-(asdf:defsystem #:llama
+(asdf:defsystem #:nait.cnt.llama
   :description "Lisp Attendance and Marking Application"
   :author "AJ Armstrong <aja@nait.ca>"
   :license "BSD"
