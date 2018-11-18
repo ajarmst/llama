@@ -9,9 +9,10 @@
 (defvar *date* (get-universal-time))
 
 (defvar *workdir*
-  (merge-pathnames
-   (make-pathname
-    :directory '(:relative "llama"))
-   (user-homedir-pathname)))
+  (namestring
+   (merge-pathnames
+    (make-pathname
+     :directory '(:relative "llama"))
+    (user-homedir-pathname))))
 
 (ensure-directories-exist *workdir*)
