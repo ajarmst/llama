@@ -11,7 +11,7 @@
                (:file "database")
                (:file "time")
                (:file "schemas")
-               (:file "files")xf
+               (:file "files")
                (:file "utility")
                (:file "io")
                (:file "tables")

@@ -5,7 +5,7 @@
 (defvar *courseid* ""
   "eg: CMPE1700")
 (defvar *classid* ""
-  "eg: CNT12")
+  "eg: 3D-A02")
 (defvar *date* (get-universal-time))
 
 (defvar *workdir*
@@ -16,3 +16,4 @@
     (user-homedir-pathname))))
 
 (ensure-directories-exist *workdir*)
+(setf *default-pathname-defaults* (pathname *workdir*))

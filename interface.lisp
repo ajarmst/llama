@@ -20,7 +20,7 @@
   "Interactively set class info, with defaults"
   (let ((courseid *courseid*) (classid *classid*) (date (get-universal-time)))
     (if (string= courseid "") (setf courseid "CMPE1700"))
-    (if (string= classid "") (setf classid "2K:A01"))
+    (if (string= classid "") (setf classid "2K-A01"))
     (set-class (prompt-read-default "Course" courseid)
 	       (prompt-read-default "Class" classid)
 	       (prompt-read-default "Date" (format-time nil "%d %b %Y"
@@ -428,7 +428,8 @@ class, without modifying the note"
   "Prints a summary of marks for a student in a class to console"
   (let* ((categories (get-categories courseid))
          (classid (classid-from-studentid studentid))
-         (title (format nil "~a - ~a (~a)" (string-student-from-id studentid) courseid classid)))
+         (title (format nil "~a - ~a (~a)" (string-student-from-id studentid)
+                        courseid classid)))
     (format *query-io* "~a~%~a~%~a~%~%"
 	    (string-underline title)
 	    title
@@ -457,7 +458,7 @@ class, without modifying the note"
 	(do-rows (task tasks)
 	  (format *query-io* "~10,1F" (column-value task :outof)))
 	(format *query-io* "~%")
-	(format *query-io* "~25@a" "Percent:")
+        (format *query-io* "~25@a" "Percent:")
 	(do-rows (task tasks)
 	  (format *query-io* "~10@a"
 		  (get-mark-percent-string* studentid
