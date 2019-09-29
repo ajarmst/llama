@@ -10,7 +10,8 @@
      (:lastname interned-string) ; Interned, because cost can be amortized by searches
      (:firstname string "")
      (:middlename string "")
-     (:nickname string ""))))
+     (:nickname string "")
+     (:email string ""))))
 
 (defparameter *schema.courses*
   (make-schema
@@ -21,7 +22,7 @@
 (defparameter *schema.classes* ;Student/Course Linkage
   (make-schema
    '((:studentid number) ; 2005988
-     (:courseid interned-string) ; "CNT270" 
+     (:courseid interned-string) ; "CNT270"
      (:classid interned-string)))) ; "1F" or "CNT12"
 
 (defparameter *schema.events* ; Notes for particular classes
