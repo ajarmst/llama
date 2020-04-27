@@ -15,13 +15,13 @@
   (let ((out ""))
     (loop for x across in
 	  do(setf out (concatenate 'string out "-")))
-  out)) 
+  out))
 
 (defun string-student (student)
   "Generate a string from a student record"
   (with-column-values (lastname firstname middlename nickname) student
-		      (format nil "~a~a~a~a" 
-			      lastname 
+		      (format nil "~a~a~a~a"
+			      lastname
 			      (if (eq (length firstname) 0)
 				  (format nil "")
 				(format nil ", ~a" firstname))
@@ -37,7 +37,7 @@
   (with-column-values (studentid lastname firstname middlename nickname) student
 		      (format nil "~a - ~a~a~a~a"
 			      studentid
-			      lastname 
+			      lastname
 			      (if (eq (length firstname) 0)
 				  (format nil "")
 				(format nil ", ~a" firstname))
@@ -118,12 +118,12 @@
 
       (format nil "")
     (format-time nil "%d %b %Y" date)))
-  
+
 
 (defun string-attendance (record)
   "Generates a string from an attendance record"
-  (with-column-values (courseid date attendance note) record 
-		      (format nil "~a (~a): ~a~a" 
+  (with-column-values (courseid date attendance note) record
+		      (format nil "~a (~a): ~a~a"
 			      (string-date date)
 			      courseid
 			      attendance
@@ -140,8 +140,8 @@
 					  :classid classid)))
 	(output "\\begin{footnotesize}~%\\begin{enumerate}~%")
 	(have-output nil))
-    (setq output (concatenate 'string 
-			      (format nil "\\subsubsection*{Attendance: ~a}~%~%" 
+    (setq output (concatenate 'string
+			      (format nil "\\subsubsection*{Attendance: ~a}~%~%"
 				      (string-student-from-id studentid))
 			      output))
     (do-rows (record records)
@@ -153,10 +153,10 @@
 								 (string-attendance record)
 								 "}~%"))
 				       (setf have-output T)))))
-    (if have-output	  
+    (if have-output
 	(format nil "~a\\end{enumerate}~%\\end{footnotesize}~%" output)
       "")))
-				     
+
 (defun string-mark (mark)
   "Generates a string from a numeric mark.  Typically paired with get-mark"
   (cond
@@ -169,7 +169,7 @@
   (let ((tasks (get-tasks* categoryid)))
     (table-size tasks)))
 
-(defun task-maximum (taskid) ;nil if not found 
+(defun task-maximum (taskid) ;nil if not found
   "Return the maximum score (the 'out-of') for a task"
   ;Get Task
   (let ((tasks (select :from *tasks*
@@ -179,7 +179,7 @@
 		  (column-value (nth-row 0 tasks) :outof)
       nil)))
 
-(defun course-average (taskid &optional (float t) (count-incomplete-tasks nil)) ; Assumes 0 for incomplete
+(defun course-average (taskid &optional (float t) (count-incomplete-tasks t)) ; Assumes 0 for incomplete
 "Return the average for all students in all courses for a task"
 ;Get Marks
 (let ((marks (select :from *marks*
@@ -200,11 +200,11 @@
       (float (/ total count))
     (/ total count))))
 
-(defun course-average-percent (taskid &optional (count-incomplete-tasks nil))
-  (float (* 100 (/ (course-average taskid count-incomplete-tasks) 
+(defun course-average-percent (taskid &optional (count-incomplete-tasks t))
+  (float (* 100 (/ (course-average taskid count-incomplete-tasks)
 	    (task-maximum taskid)))))
 
-(defun class-average (classid taskid &optional (count-incomplete-tasks nil) (float t))
+(defun class-average (classid taskid &optional (count-incomplete-tasks t) (float t))
 "Return the class average for all students in a class for a task"
 ;Get Marks
 (let ((marks (select :from *marks*
@@ -232,7 +232,7 @@
 	(float (/ total count))
       (/ total count)))))
 
-(defun class-average-percent (classid taskid &optional (count-incomplete-tasks nil))
+(defun class-average-percent (classid taskid &optional (count-incomplete-tasks t))
   (let ((average (class-average classid taskid count-incomplete-tasks)))
     (if average
 	(float (* 100 (/ average (task-maximum taskid))))
@@ -252,7 +252,7 @@
 		  (column-value task :outof))))
 	    (incf count (column-value task :weight))))
     (if (> count 0) (/ total count) nil)))
-	  
+
 (defun student-category-average-percent (studentid courseid category)
   "Returns the above as a percentage"
   (let ((average (student-category-average studentid courseid category)))
@@ -266,7 +266,7 @@
 	(total 0)
 	(count 0))
     (do-rows (category categories)
-	     (let ((average 
+	     (let ((average
 		    (student-category-average-percent
 		     studentid courseid (column-value category :name))))
 	       (incf total (* (if average average 0) (column-value category :weight))))
@@ -284,18 +284,18 @@
       (cols (num-tasks (categoryid-from-name courseid category))))
   (if (and (> cols 0))
       (if (<= cols max-width)
-	  (setf tables (concatenate 'string tables 
-		       (latex-marks-category-table-range 
+	  (setf tables (concatenate 'string tables
+		       (latex-marks-category-table-range
 			studentid courseid category)))
 	  (progn
 	    (let ((tablecount (floor (/ cols max-width))))
 	      (if (= 0 (mod cols max-width)) (decf tablecount))
 	      (loop for j from 0 to tablecount do
-		    (setf tables 
+		    (setf tables
 			  (concatenate 'string tables
 				       (latex-marks-category-table-range
 					studentid courseid category
-					(* max-width j) 
+					(* max-width j)
 					(+ (* max-width j) (- max-width 1))
 					(= j tablecount)))))))))
   (format nil tables)))
@@ -311,7 +311,7 @@
       (tasks (get-tasks courseid category))
       (i 0))
   (if (and (> cols 0) (<= col-start (- cols 1)))
-      (progn 
+      (progn
 	(setf col-end (min (or col-end (- cols 1)) (- cols 1)))
 	(loop for i from col-start to (+ col-end 1) do
 	      (setf table (concatenate 'string table "r|")))
@@ -325,7 +325,7 @@
 					  (column-value task :index) "}")))
 	(incf i))
 	(setf table (concatenate 'string table "\\\\\\hline\\hline~%"))
-	
+
 	(setf table (concatenate 'string table "{\\bf  Mark}"))
 	(setf i 0)
 	(do-rows (task tasks)
@@ -335,7 +335,7 @@
 							    (column-value task :taskid)) "")))
 	  (incf i))
 	(setf table (concatenate 'string table "\\\\\\hline~%"))
-	
+
 	(setf table (concatenate 'string table "{\\bf  Out of}"))
 	(setf i 0)
 	(do-rows (task tasks)
@@ -344,9 +344,9 @@
 					  (format nil "~,1f" (column-value task :outof)) "")))
 	  (incf i))
 	(setf table (concatenate 'string table "\\\\\\hline~%"))
-	
+
 	(setf table (concatenate 'string table "{\\bf  Percent}"))
-	(setf i 0) 
+	(setf i 0)
 	(do-rows (task tasks)
 	  (if (and (>= i col-start) (<= i col-end))
 		 (setf table (concatenate 'string table " &  "
@@ -354,7 +354,7 @@
 								    (column-value task :taskid)) "")))
 	  (incf i))
 	(setf table (concatenate 'string table "\\\\\\hline~%"))
-	
+
 	(setf table (concatenate 'string table "{\\bf  Weight}"))
 	(setf i 0)
 	(do-rows (task tasks)
@@ -368,7 +368,7 @@
 	      (setf table (concatenate 'string table "{\\bf  Average} & "))
 	      (setf table (concatenate 'string table "\\multicolumn{"))
 	      (setf table (concatenate 'string table (format nil "~a" (+ (- col-end col-start) 1))))
-	      (setf table (concatenate 'string table "}{|r|}{{\\bf " 
+	      (setf table (concatenate 'string table "}{|r|}{{\\bf "
 				       (format nil "~,1f" (student-category-average-percent studentid courseid category))
 				       "}} \\\\\\hline~%"))))
 	(setf table (concatenate 'string table "\\end{tabular}~%"))
@@ -376,7 +376,7 @@
 	(format nil table))
     "")))
 
-(defun latex-marks-summary-table (studentid courseid 
+(defun latex-marks-summary-table (studentid courseid
 				  &optional (max-width 10))
  "Generates 'tabular' summaries of final mark for a student and course"
 (let* ((tables "")
@@ -385,22 +385,22 @@
   (if (and (> cols 0))
       (if (<= cols max-width)
 	  (setf tables (concatenate 'string tables
-		       (latex-marks-summary-table-range 
+		       (latex-marks-summary-table-range
 			studentid courseid)))
 	  (progn
 	    (let ((tablecount (floor (/ cols max-width))))
 	      (if (= 0 (mod cols max-width)) (decf tablecount))
 	      (loop for j from 0 to tablecount do
-		    (setf tables 
+		    (setf tables
 			  (concatenate 'string tables
 				       (latex-marks-summary-table-range
 					studentid courseid
-					(* max-width j) 
+					(* max-width j)
 					(+ (* max-width j) (- max-width 1))
 					(= j tablecount)))))))))
   (format nil tables)))
 
-(defun latex-marks-summary-table-range (studentid courseid  
+(defun latex-marks-summary-table-range (studentid courseid
 					&optional
 					(col-start 0) ;0 means first
 					(col-end nil) ;nil means last
@@ -412,7 +412,7 @@
        (i 0))
   (if (and (> cols 0) (<= col-start (- cols 1)))
       (progn
-	(setf col-end (min (or col-end (- cols 1)) (- cols 1))) 
+	(setf col-end (min (or col-end (- cols 1)) (- cols 1)))
 	(loop for i from col-start to (+ col-end 1) do
 	      (setf table (concatenate 'string table "r|")))
 	(setf table (concatenate 'string table "}\\hline~%"))
@@ -431,12 +431,12 @@
 	(do-rows (category categories)
 	  (if (and (>= i col-start) (<= i col-end))
 	      (setf table (concatenate 'string table " &  "
-				       (format nil "~,1f" 
-					       (student-category-average-percent 
-						studentid 
-						courseid 
+				       (format nil "~,1f"
+					       (student-category-average-percent
+						studentid
+						courseid
 						(column-value category :name))))))
-	  (incf i)) 
+	  (incf i))
 	(setf table (concatenate 'string table "\\\\\\hline~%"))
 	(setf table (concatenate 'string table "{\\bf  Weight}"))
         ;;FIXME
@@ -444,7 +444,7 @@
 	(do-rows (category categories)
 	  (if (and (>= i col-start) (<= i col-end))
 	      (setf table (concatenate 'string table " &  "
-				       (format nil "~,1f" 
+				       (format nil "~,1f"
 					       (column-value category :weight)) "")))
 	  (incf i))
 	(setf table (concatenate 'string table "\\\\\\hline~%"))
@@ -453,7 +453,7 @@
 	      (setf table (concatenate 'string table "{\\bf  Total} & "))
 	      (setf table (concatenate 'string table "\\multicolumn{"))
 	      (setf table (concatenate 'string table (format nil "~a" (+ 1 (- col-end col-start)))))
-	      (setf table (concatenate 'string table "}{|r|}{{\\bf " 
+	      (setf table (concatenate 'string table "}{|r|}{{\\bf "
 				     (format nil "~,1f" (student-final-mark-percent studentid courseid))
 				     "}} \\\\\\hline~%"))))
 	(setf table (concatenate 'string table "\\end{tabular}~%"))
@@ -465,7 +465,7 @@
 "Generates a latex two-sided page for a student's marks"
  (let* ((categories (get-categories courseid))
        (classid (classid-from-studentid studentid))
-       (title (format nil "~a - ~a (~a)" 
+       (title (format nil "~a - ~a (~a)"
 		      (string-student-from-id studentid) courseid classid))
        (page (concatenate 'string "\\newpage~%\\section*{~~~~~~~~~~~~~~~~~~" title "}~%")))
    (do-rows (category categories)
@@ -473,13 +473,13 @@
 				    (latex-marks-category-table studentid courseid
 								(column-value category :name))))
 	    (setf page (concatenate 'string page "~%~%")))
-   (setf page (concatenate 'string page "\\cleardoublepage~%~%"))))
+   (setf page (concatenate 'string page "\\clearpage~%~%"))))
 
 (defun latex-marks-student-final-sheet (studentid courseid)
 "Generates a latex two-sided page for a student's marks"
  (let* ((categories (get-categories courseid))
        (classid (classid-from-studentid studentid))
-       (title (format nil "~a - ~a (~a)" 
+       (title (format nil "~a - ~a (~a)"
 		      (string-student-from-id studentid) courseid classid))
        (page (concatenate 'string "\\newpage~%\\section*{~~~~~~~~~~~~~~~~~~" title "}~%")))
    (do-rows (category categories)
@@ -490,4 +490,4 @@
    (setf page (concatenate 'string page (latex-marks-summary-table studentid courseid)))
    (setf page (concatenate 'string page "~%\\clearpage~%~%"))
    (setf page (concatenate 'string page "~%" (latex-attendance-student studentid courseid classid)))
-   (setf page (concatenate 'string page "~%\\cleardoublepage~%~%"))))
+   (setf page (concatenate 'string page "~%\\clearpage~%~%"))))

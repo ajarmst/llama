@@ -502,7 +502,7 @@ class, without modifying the note"
       (format out "\\maketitle~%")
       (format out "~%~%")
       (format out "\\subsection*{Marks Summary Sheets}~%~%")
-      (format out "\\cleardoublepage")
+      (format out "\\clearpage")
       (do-rows (student students)
 	(format out (latex-marks-student-sheet
 		     (column-value student :studentid) courseid)))
@@ -527,7 +527,7 @@ class, without modifying the note"
       (format out "\\maketitle~%")
       (format out "~%~%")
       (format out "\\subsection*{Marks Summary Sheets}~%~%")
-      (format out "\\cleardoublepage")
+      (format out "\\clearpage")
       (do-rows (student students)
 	(format out (latex-marks-student-final-sheet
 		     (column-value student :studentid) courseid)))
